@@ -1,0 +1,27 @@
+:root {
+  /* COLORS */
+
+  --white: #fff;
+  --main-color: #3369f3;
+
+  --text-color: #1e1e1e;
+  --error-color: #ff0000;
+
+  --dark-gray-color: #999999;
+  --light-gray-color: #eaeaea;
+
+  --input-error-color: #ff2f2f;
+
+  --background-sidebar-color: #fbfbfb;
+
+  /* VARIABLES */
+
+  --sidebar-chats-width: 310px;
+  --sidebar-account-width: 64px;
+}
+
+* {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  box-sizing: border-box;
+}
