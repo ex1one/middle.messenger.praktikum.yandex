@@ -1,0 +1,23 @@
+.page-error-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 100dvh;
+  align-items: center;
+}
+
+.page-error-body {
+  margin-bottom: 69px;
+  text-align: center;
+
+  .page-error-body__status {
+    margin-bottom: 20px;
+    font-size: 40px;
+    line-height: 40px;
+  }
+
+  .page-error-body__description {
+    font-size: 20px;
+    line-height: 20px;
+  }
+}
