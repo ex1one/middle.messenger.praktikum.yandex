@@ -1,0 +1,49 @@
+{{#> AccountLayout title="Вход"}}
+    {{#*inline "children"}}
+        <div class="profile-container">
+          <div class="logo">
+            <div class="logo__image">
+              <img src="../assets/images/default-avatar.png" alt="logo" />
+            </div>
+            <div class="logo__text">
+              Иван
+            </div>
+          </div>
+
+          <div class="profile-data">
+            <div class="profile-data__item">
+              <p class="item__name">Почта</p>
+              <p name="email" class="item__value">pochta@yandex.ru</p>
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Логин</p>
+              <p name="login" class="item__value">ivanivanov</p>
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Имя</p>
+              <p name="first_name" class="item__value">Иван</p>
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Фамилия</p>
+              <p name="second_name" class="item__value">Иванов</p>
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Имя в чате</p>
+              <p name="display_name" class="item__value">Иван</p>
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Телефон</p>
+              <p name="phone" class="item__value">+ 7 (909) 967 30 30</p>
+            </div>
+          </div>
+
+          <div>
+            {{> Button variant="link" color="primary" size="large" text="Изменить данные" }}
+            {{> Divider }}
+            {{> Button variant="link" color="primary" size="large" text="Изменить пароль" }}
+            {{> Divider }}
+            {{> Button variant="link" color="red" size="large" text="Выйти" }}
+          </div>
+      </div>
+    {{/inline}}
+{{/ AccountLayout }}
