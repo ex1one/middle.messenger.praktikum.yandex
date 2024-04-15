@@ -1,0 +1,10 @@
+{{#> FormTemplate title="Вход"}}
+    {{#*inline "body"}}
+        {{> Input variant="underline" name="login" label="Логин" }}
+        {{> Input variant="underline" name="password" variant="underline" label="Пароль"}}
+    {{/inline}}
+    {{#*inline "footer"}}
+        {{> Button text="Авторизоваться" variant="primary" }}
+        {{> Button text="Нет аккаунта?" variant="link" size="small" color="primary" }}
+    {{/inline}}
+{{/ FormTemplate}}
