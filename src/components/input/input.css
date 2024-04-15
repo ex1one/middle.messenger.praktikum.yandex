@@ -1,0 +1,90 @@
+.input {
+  position: relative;
+}
+
+.input__container {
+  display: flex;
+  flex-direction: column;
+  height: 38px;
+}
+
+.input__label {
+  color: var(--dark-gray-color);
+  font-size: 13px;
+  font-weight: 500;
+  user-select: none;
+}
+
+.input__element {
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+  width: 100%;
+  background: transparent;
+}
+
+.input__element:focus-visible {
+  outline: none;
+}
+
+.input__text-error {
+  transform: translateY(16px);
+  color: var(--input-error-color);
+  font-size: 8px;
+  font-weight: 400;
+  display: none;
+}
+
+.input__error .input__text-error {
+  display: block;
+}
+
+.input__error .input__element {
+  color: var(--input-error-color);
+}
+
+.input__error {
+  margin-bottom: 16px;
+}
+
+.left-icon {
+  color: var(--dark-gray-color);
+}
+
+/* VARIANTS */
+
+.input__container--underline {
+  border-bottom: 1px solid var(--main-color);
+  padding: 0 0 7px 0;
+
+  .input__label {
+    will-change: font-size, transform;
+    transition:
+      font-size 0.5s,
+      transform 0.5s;
+  }
+
+  .input__element--underline {
+    transform: translateY(14px);
+  }
+
+  .input__element:not(:placeholder-shown) + .input__label,
+  .input__element:focus + .input__label {
+    transform: translateY(-16px);
+    font-size: 9px;
+  }
+}
+
+.input__container--filled {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  background-color: #efefef;
+  border-radius: 5px;
+  padding: 10px;
+
+  .input__element:placeholder-shown + .input__label {
+    display: none;
+  }
+}
