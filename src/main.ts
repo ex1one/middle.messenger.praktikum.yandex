@@ -24,7 +24,6 @@ const pages = {
   'server-error': [Pages.ServerError],
   'profile': [Pages.Profile],
   'chats': [Pages.Chats],
-  'navigate': [Pages.Navigate, { menu }],
 };
 
 Object.entries(Components).forEach(([name, component]) => {
@@ -44,9 +43,9 @@ function navigate(page: string) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const [source, context] = pages['navigate'];
+  const [page, context] = [Components.Navigate, { menu }];
   const container = document.getElementById('nav')!;
-  container.innerHTML = Handlebars.compile(source)(context);
+  container.innerHTML = Handlebars.compile(page)(context);
 });
 
 document.addEventListener('click', (event) => {
