@@ -17,6 +17,7 @@
 
 .input__element {
   border: none;
+  padding: 0;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-color);
@@ -87,4 +88,30 @@
   .input__element:placeholder-shown + .input__label {
     display: none;
   }
+}
+
+.input__container--transparent {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  background-color: transparent;
+  padding: 10px;
+  border: none;
+  height: fit-content;
+
+  .input__element:placeholder-shown + .input__label {
+    display: none;
+  }
+}
+
+/* COLORS */
+
+.input__element--dark-gray {
+  color: var(--dark-gray-color);
+}
+
+/* TEXT-ALIGN */
+
+.input__element--right {
+  text-align: right;
 }
