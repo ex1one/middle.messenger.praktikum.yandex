@@ -4,37 +4,6 @@
   gap: 60px;
 }
 
-.logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 21px;
-
-  .logo__image {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    background-color: #efefef;
-  }
-
-  .logo__text {
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 16px;
-  }
-
-  .logo__image img {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-  }
-}
-
 .profile-data {
   display: flex;
   flex-direction: column;
@@ -46,7 +15,6 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    padding-bottom: 10px;
     border-bottom: 1px solid var(--light-gray-color);
 
     .item__name {
