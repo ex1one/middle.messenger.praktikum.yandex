@@ -12,6 +12,7 @@ const menu: MenuItem[] = [
   { link: 'sign-in', text: 'Вход' },
   { link: 'sign-up', text: 'Регистрация' },
   { link: 'profile', text: 'Профиль' },
+  { link: 'profile-edit', text: 'Редактирование профиля' },
   { link: 'chats', text: 'Чаты' },
   { link: 'not-found', text: '404' },
   { link: 'server-error', text: '500' },
@@ -23,6 +24,7 @@ const pages = {
   'not-found': [Pages.NotFound],
   'server-error': [Pages.ServerError],
   'profile': [Pages.Profile],
+  'profile-edit': [Pages.ProfileEdit],
   'chats': [Pages.Chats],
 };
 
