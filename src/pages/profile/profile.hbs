@@ -1,0 +1,42 @@
+{{#> AccountLayout }}
+    {{#*inline "children"}}
+        <div class="profile-container">
+          {{> ProfileLogo image="/images/default-avatar.png" showName="true" name="Иван" }}
+
+          <div class="profile-data">
+            <div class="profile-data__item">
+              <p class="item__name">Почта</p>
+              {{>  Input variant="transparent" name="email" color="dark-gray" value="pochta@yandex.ru" textAlign="right" readonly="true" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Логин</p>
+              {{>  Input variant="transparent" name="login" color="dark-gray" value="ivanivanov" textAlign="right" readonly="true" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Имя</p>
+              {{>  Input variant="transparent" name="first_name" color="dark-gray" value="Иван" textAlign="right" readonly="true" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Фамилия</p>
+              {{>  Input variant="transparent" name="second_name" color="dark-gray" value="Иванов" textAlign="right" readonly="true" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Имя в чате</p>
+              {{>  Input variant="transparent" name="display_name" color="dark-gray" value="Иван" textAlign="right" readonly="true" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Телефон</p>
+              {{>  Input variant="transparent" name="phone" color="dark-gray" value="+ 7 (909) 967 30 30"  textAlign="right" readonly="true" }}
+            </div>
+          </div>
+
+          <div>
+            {{> Button variant="link" color="primary" size="large" text="Изменить данные" }}
+            {{> Divider }}
+            {{> Button variant="link" color="primary" size="large" text="Изменить пароль" }}
+            {{> Divider }}
+            {{> Button variant="link" color="red" size="large" text="Выйти" }}
+          </div>
+      </div>
+    {{/inline}}
+{{/ AccountLayout }}

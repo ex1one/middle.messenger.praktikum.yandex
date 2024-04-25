@@ -1,0 +1,32 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.profile-data {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .profile-data__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid var(--light-gray-color);
+
+    .item__name {
+      font-size: 13px;
+      line-height: 13px;
+      color: var(--text-color);
+    }
+
+    .item__value {
+      font-size: 13px;
+      line-height: 13px;
+      color: var(--dark-gray-color);
+    }
+  }
+}

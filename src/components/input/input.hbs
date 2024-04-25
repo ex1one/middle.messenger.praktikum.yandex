@@ -1,0 +1,20 @@
+{{#if variant}}
+    <div class="input">
+        <label class="input__container input__container--{{variant}} {{#if error}}input__error{{/if}}">
+            {{#if leftIconSearch }}
+                <div class="left-icon">
+                    <svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-search"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                </div>
+            {{/if}}
+            <input name="{{name}}" {{#if value}}value="{{value}}"{{/if}} class="input__element input__element--{{variant}} {{#if color}}input__element--{{color}}{{/if}} {{#if textAlign}}input__element--{{textAlign}}{{/if}}" {{#if readonly}}readonly="{{readonly}}"{{/if}} placeholder="{{placeholder}}" />
+
+            {{#if label}}
+                <div class="input__label">{{label}}</div>
+            {{/if}}
+
+            {{#if error}}
+                <div class="input__text-error">{{error}}</div>
+            {{/if}}
+        </label>
+    </div>
+{{/if}}

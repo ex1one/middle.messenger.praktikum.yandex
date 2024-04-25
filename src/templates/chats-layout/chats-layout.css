@@ -1,0 +1,27 @@
+.chats-layout__container {
+  display: flex;
+}
+
+.chats-layout__sidebar {
+  height: 100dvh;
+  width: var(--sidebar-chats-width);
+  background-color: var(--background-sidebar-color);
+  border-right: 1px solid var(--light-gray-color);
+  padding: 20px 10px 0px 10px;
+
+  .sidebar__search {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+
+    .link-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: end;
+    }
+  }
+}
+
+.chats-layout__content {
+  width: calc(100% - var(--sidebar-chats-width));
+}

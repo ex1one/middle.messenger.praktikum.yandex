@@ -3,10 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=7.0.0"
+  },
   "scripts": {
     "dev": "vite",
+    "start": "npm run build && node ./server.js",
     "build": "tsc && vite build",
-    "preview": "vite preview",
     "lint": "eslint --ignore-path .eslintignore --ext .ts",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(ts|json)\""
   },
@@ -26,5 +30,8 @@
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-handlebars": "^2.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
   }
 }

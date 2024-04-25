@@ -1,0 +1,38 @@
+{{#> AccountLayout }}
+    {{#*inline "children"}}
+        <div class="profile-container">
+          {{> ProfileLogo image="/images/default-avatar.png" }}
+
+          <form class="profile-data">
+            <div class="profile-data__item">
+              <p class="item__name">Почта</p>
+              {{>  Input variant="transparent" name="email" color="dark-gray" value="pochta@yandex.ru" textAlign="right" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Логин</p>
+              {{>  Input variant="transparent" name="login" color="dark-gray" value="ivanivanov" textAlign="right" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Имя</p>
+              {{>  Input variant="transparent" name="first_name" color="dark-gray" value="Иван" textAlign="right" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Фамилия</p>
+              {{>  Input variant="transparent" name="second_name" color="dark-gray" value="Иванов" textAlign="right" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Имя в чате</p>
+              {{>  Input variant="transparent" name="display_name" color="dark-gray" value="Иван" textAlign="right" }}
+            </div>
+            <div class="profile-data__item">
+              <p class="item__name">Телефон</p>
+              {{>  Input variant="transparent" name="phone" color="dark-gray" value="+ 7 (909) 967 30 30"  textAlign="right" }}
+            </div>
+          </form>
+
+          <div>
+            {{> Button variant="primary" text="Сохранить" }}
+          </div>
+      </div>
+    {{/inline}}
+{{/ AccountLayout }}
