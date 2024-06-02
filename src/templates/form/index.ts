@@ -1,3 +1,3 @@
-import './form.css';
-
-export { default as FormTemplate } from './form.hbs?raw';
+export { FormTemplate as default } from './form';
+export { FormElement } from './form';
+export * from './components';
