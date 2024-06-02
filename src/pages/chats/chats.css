@@ -1,9 +1,0 @@
-.stub-text {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: var(--dark-gray-color);
-}
