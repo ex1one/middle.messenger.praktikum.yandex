@@ -1,3 +1,3 @@
-import './chats-layout.css';
+export { ChatsLayout as default } from './chats-layout';
 
-export { default as ChatsLayout } from './chats-layout.hbs?raw';
+export * from './components';
