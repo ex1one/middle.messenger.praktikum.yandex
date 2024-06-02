@@ -12,7 +12,6 @@ const menu: MenuItem[] = [
   { link: 'sign-in', text: 'Вход' },
   { link: 'sign-up', text: 'Регистрация' },
   { link: 'profile', text: 'Профиль' },
-  { link: 'profile-edit', text: 'Редактирование профиля' },
   { link: 'chats', text: 'Чаты' },
   { link: 'not-found', text: '404' },
   { link: 'server-error', text: '500' },
@@ -24,16 +23,19 @@ const pages = {
   'not-found': [Pages.NotFound],
   'server-error': [Pages.ServerError],
   'profile': [Pages.Profile],
-  'profile-edit': [Pages.ProfileEdit],
   'chats': [Pages.Chats],
 };
 
 Object.entries(Components).forEach(([name, component]) => {
-  Handlebars.registerPartial(name, component);
+  if (typeof component === 'string') {
+    Handlebars.registerPartial(name, component);
+  }
 });
 
 Object.entries(Templates).forEach(([name, component]) => {
-  Handlebars.registerPartial(name, component);
+  if (typeof component === 'string') {
+    Handlebars.registerPartial(name, component);
+  }
 });
 
 function navigate(page: string) {
@@ -41,7 +43,14 @@ function navigate(page: string) {
   // @ts-expect-error
   const [source, context] = pages[page];
   const container = document.getElementById('content')!;
-  container.innerHTML = Handlebars.compile(source)(context);
+
+  if (source instanceof Object) {
+    const page = new source(context);
+    container.innerHTML = '';
+    container.append(page.getContent());
+  } else {
+    container.innerHTML = Handlebars.compile(source)(context);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
