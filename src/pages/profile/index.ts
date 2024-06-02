@@ -1,3 +1,4 @@
-import './profile.css';
+export { Profile as default } from './profile';
 
-export { default as Profile } from './profile.hbs?raw';
+export * from './components';
+export type * from './components';
