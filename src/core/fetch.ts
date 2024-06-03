@@ -24,24 +24,30 @@ interface Options {
   data?: any;
 }
 
+// TODO: Добавить дженерик для data
+type HTTPMethod = (
+  url: string,
+  options: OptionsWithoutMethod,
+) => Promise<XMLHttpRequest>;
+
 type OptionsWithoutMethod = Omit<Options, 'method'>;
 
 export default class HTTPTransport {
-  get(url: string, options: OptionsWithoutMethod): Promise<XMLHttpRequest> {
+  get: HTTPMethod = (url, options) => {
     return this.request(url, { ...options, method: METHODS.GET });
-  }
+  };
 
-  put(url: string, options: OptionsWithoutMethod) {
-    this.request(url, { ...options, method: METHODS.PUT });
-  }
+  put: HTTPMethod = (url, options) => {
+    return this.request(url, { ...options, method: METHODS.PUT });
+  };
 
-  post(url: string, options: OptionsWithoutMethod) {
-    this.request(url, { ...options, method: METHODS.POST });
-  }
+  post: HTTPMethod = (url, options) => {
+    return this.request(url, { ...options, method: METHODS.POST });
+  };
 
-  delete(url: string, options: OptionsWithoutMethod) {
-    this.request(url, { ...options, method: METHODS.DELETE });
-  }
+  delete: HTTPMethod = (url, options) => {
+    return this.request(url, { ...options, method: METHODS.DELETE });
+  };
 
   request(
     url: string,

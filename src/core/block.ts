@@ -67,6 +67,17 @@ class Block<Props extends IProps = IProps> {
     });
   }
 
+  _removeEvents() {
+    const { events = {} } = this.props as { events: Record<string, Function> };
+
+    Object.keys(events).forEach((eventName) => {
+      this._element?.removeEventListener(
+        eventName,
+        events[eventName] as EventListenerOrEventListenerObject,
+      );
+    });
+  }
+
   _registerEvents(eventBus: EventBus) {
     eventBus.on(Block.EVENTS.INIT, this._init.bind(this));
     eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
