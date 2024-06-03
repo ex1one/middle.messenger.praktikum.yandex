@@ -48,6 +48,26 @@ class Block<Props extends IProps = IProps> {
     eventBus.emit(Block.EVENTS.INIT);
   }
 
+  _makePropsProxy(props: Props) {
+    return new Proxy(props, {
+      get(target, prop) {
+        const value = target[prop];
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+      set: (target, prop, value) => {
+        if (target[prop] !== value) {
+          target[prop] = value;
+          this._setUpdate = true;
+        }
+
+        return true;
+      },
+      deleteProperty() {
+        throw new Error('Нет доступа');
+      },
+    });
+  }
+
   // TODO: Нужно ли возвращать новую ссылку на children?
   _makeChildren(props: Props) {
     Object.entries(props).forEach(([key, value]) => {
@@ -57,33 +77,28 @@ class Block<Props extends IProps = IProps> {
     });
   }
 
-  _addEvents() {
-    const { events = {} } = this.props;
-
-    Object.keys(events).forEach((eventName) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      this._element!.addEventListener(eventName, events[eventName]);
-    });
-  }
-
-  _removeEvents() {
-    const { events = {} } = this.props as { events: Record<string, Function> };
-
-    Object.keys(events).forEach((eventName) => {
-      this._element?.removeEventListener(
-        eventName,
-        events[eventName] as EventListenerOrEventListenerObject,
-      );
-    });
-  }
-
   _registerEvents(eventBus: EventBus) {
     eventBus.on(Block.EVENTS.INIT, this._init.bind(this));
     eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
     eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
     eventBus.on(Block.EVENTS.FLOW_CWU, this._componentWillUnmount.bind(this));
     eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
+  }
+
+  _addEvents() {
+    const { events = {} } = this.props;
+
+    Object.keys(events).forEach((eventName) => {
+      this._element?.addEventListener(eventName, events[eventName]);
+    });
+  }
+
+  _removeEvents() {
+    const { events = {} } = this.props;
+
+    Object.keys(events).forEach((eventName) => {
+      this._element?.removeEventListener(eventName, events[eventName]);
+    });
   }
 
   private _init() {
@@ -162,6 +177,8 @@ class Block<Props extends IProps = IProps> {
 
     const newElement = fragment.firstElementChild as HTMLElement;
 
+    this._removeEvents();
+
     if (this._element) {
       this._element.replaceWith(newElement);
     }
@@ -210,26 +227,6 @@ class Block<Props extends IProps = IProps> {
     }
 
     return this._element;
-  }
-
-  _makePropsProxy(props: Props) {
-    return new Proxy(props, {
-      get(target, prop) {
-        const value = target[prop];
-        return typeof value === 'function' ? value.bind(target) : value;
-      },
-      set: (target, prop, value) => {
-        if (target[prop] !== value) {
-          target[prop] = value;
-          this._setUpdate = true;
-        }
-
-        return true;
-      },
-      deleteProperty() {
-        throw new Error('Нет доступа');
-      },
-    });
   }
 
   show() {
