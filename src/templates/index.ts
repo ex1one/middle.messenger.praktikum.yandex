@@ -1,4 +1,9 @@
-export { FormTemplate } from './form';
-export { AccountLayout } from './account-layout';
-export { PageErrorTemplate } from './page-error';
-export { ChatsLayout } from './chats-layout';
+import FormTemplate from './form';
+import PageErrorTemplate from './page-error';
+import AccountLayout from './account-layout';
+import ChatsLayout from './chats-layout';
+
+export { FormTemplate, PageErrorTemplate, AccountLayout, ChatsLayout };
+
+export * from './form';
+export * from './chats-layout';

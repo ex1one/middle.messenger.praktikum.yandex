@@ -1,3 +1,1 @@
-import './account-layout.css';
-
-export { default as AccountLayout } from './account-layout.hbs?raw';
+export { AccountLayout as default } from './account-layout';

@@ -4,20 +4,28 @@
   gap: 60px;
 }
 
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
 .profile-data {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 
   .profile-data__item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
     gap: 8px;
-    border-bottom: 1px solid var(--light-gray-color);
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--light-gray-color);
+    }
 
     .item__name {
+      /* TODO: Вынести в отдельные mixins font-size, line-height, font-weight */
       font-size: 13px;
       line-height: 13px;
       color: var(--text-color);

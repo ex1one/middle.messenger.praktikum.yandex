@@ -1,3 +1,1 @@
-import './page-error.css';
-
-export { default as PageErrorTemplate } from './page-error.hbs?raw';
+export { PageErrorTemplate as default } from './page-error';

@@ -1,1 +1,1 @@
-export { default as NotFound } from './not-found.hbs?raw';
+export { NotFound as default } from './not-found';

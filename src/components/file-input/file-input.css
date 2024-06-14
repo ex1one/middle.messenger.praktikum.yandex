@@ -1,0 +1,29 @@
+.file-input-label {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.file-input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+  display: block;
+  width: 0;
+  height: 0;
+}
+
+.empty-file-name {
+  color: var(--main-color);
+  border-bottom: 1px solid var(--main-color);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+}
+
+.file-name {
+  color: var(--dark-gray-color);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+}
