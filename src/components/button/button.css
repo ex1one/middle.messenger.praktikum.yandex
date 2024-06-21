@@ -43,6 +43,18 @@
 
 /* COLORS */
 
+.button__primary--primary {
+  background-color: var(--main-color);
+}
+
+.button__primary--red {
+  background-color: var(--error-color);
+}
+
+.button__primary--secondary {
+  background-color: var(--dark-gray-color);
+}
+
 .button__link--primary {
   color: var(--main-color);
 }
