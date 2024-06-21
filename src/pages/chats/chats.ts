@@ -1,33 +1,54 @@
+import { PATHES } from '@src/consts';
+import API from '@src/api';
+import { Chat, TChats } from '@src/api/chats/types';
 import { Block } from '@src/core';
+import router from '@src/router';
 import { ChatsLayout, ChatsSidebar, ChatContent } from '@src/templates';
+import { ChatContentComponent } from '@src/templates/chats-layout/components/chat-content';
 
-import { TChat } from '@src/templates/chats-layout/components/chat-content';
-
-interface ChatsProps {
-  selectedChat: TChat | null;
+interface ChatsState {
+  chats: TChats;
+  selectedChat: Chat | null;
 }
 
-export class Chats extends Block<ChatsProps> {
-  constructor(props: ChatsProps) {
-    super({ ...props, selectedChat: null });
+export class Chats extends Block<{}, ChatsState> {
+  constructor() {
+    const url = new URL(window.location.href);
+    const chatId = url.searchParams.get('chat');
+
+    super(undefined, { chats: [], selectedChat: null });
+
+    API.chats.getChats().then((res) => {
+      this.setState({
+        chats: res,
+        selectedChat:
+          res.find((chat) => String(chat.id) === `${chatId}`) ?? null,
+      });
+    });
   }
 
   protected init(): void {
     const chatsLayout = new ChatsLayout({
-      selectedChat: this.props.selectedChat,
       sidebarContent: new ChatsSidebar({
-        selectedChat: this.props.selectedChat,
+        chats: this.state.chats,
+        selectedChat: this.state.selectedChat,
         onChangeSelectedChat: (selectedChat) => {
-          if (this.props.selectedChat === selectedChat) {
-            this.setProps({ selectedChat: null });
+          if (this.state.selectedChat === selectedChat) {
+            this.setState({ selectedChat: null });
+            router.go(PATHES.Chats);
           } else {
-            this.setProps({ selectedChat: selectedChat });
+            this.setState({ selectedChat: selectedChat });
+            router.go(PATHES.Chats + `?chat=${selectedChat.id}`);
           }
         },
       }),
-      content: new ChatContent({
-        selectedChat: this.props.selectedChat,
-      }),
+      content: this.state.selectedChat
+        ? new ChatContentComponent({
+            selectedChat: this.state.selectedChat,
+          })
+        : `<div class="stub">
+        Выберите чат чтобы отправить сообщение
+      </div>`,
     });
 
     this.children = { ...this.children, ChatsLayout: chatsLayout };
