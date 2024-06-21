@@ -4,7 +4,7 @@ import { renderIf } from '@src/helpers';
 import { Block, Events } from '@src/core';
 import { InputElement } from './input-element';
 
-export interface InputProps extends Events {
+export interface InputProps {
   variant?: 'underline' | 'filled' | 'transparent';
   color?: 'dark-gray';
   name?: string;
@@ -16,18 +16,10 @@ export interface InputProps extends Events {
   readonly?: boolean;
   type?: string;
   error?: string | null;
+  inputEvents?: Events['events'];
 }
 
 export class Input extends Block<InputProps> {
-  constructor(props: InputProps) {
-    const { events, ...otherProps } = props;
-    // TODO: Фиксануть типизацию у block
-    super({
-      ...otherProps,
-      inputEvents: events,
-    });
-  }
-
   protected init(): void {
     this.children = {
       ...this.children,
@@ -41,7 +33,6 @@ export class Input extends Block<InputProps> {
   protected render(): string {
     const { variant = 'filled', label, leftIcon, error } = this.props;
 
-    // TODO: Не нравится, что я пропсы передаю ручками и каждый раз проверяю
     return `
           <div class="input">
             <label class="input__container input__container--${variant} ${renderIf(error, 'input__error')}">
@@ -59,6 +50,5 @@ export class Input extends Block<InputProps> {
             </label>
         </div>
         `;
-    z;
   }
 }
