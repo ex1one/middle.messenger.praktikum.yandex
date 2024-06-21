@@ -15,9 +15,9 @@
 
 .account-layout__content {
   width: calc(100% - var(--sidebar-account-width));
-  padding: 60px 0;
+  padding: 54px 0;
 
-  .content__wrapper {
+  .account-layout-content__wrapper {
     width: 510px;
     margin: 0 auto;
   }
