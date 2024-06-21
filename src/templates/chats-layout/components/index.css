@@ -1,10 +1,10 @@
 .chat-body {
   display: flex;
   flex-direction: column;
-  justify-content: end;
   gap: 10px;
   overflow-y: auto;
   padding-bottom: 30px;
+  padding-top: 10px;
 }
 
 .history-date {
@@ -99,7 +99,7 @@
 .stub {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: calc(100dvh - 20px);
   align-items: center;
   justify-content: center;
   text-align: center;

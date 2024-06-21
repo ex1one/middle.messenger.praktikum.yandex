@@ -8,47 +8,35 @@ import { Button } from '../../../components/button/button';
 import { Input } from '@src/components';
 import { renderIf } from '@src/helpers';
 import { FormElement } from '@src/templates';
-import { useForm } from '@src/utils';
+import { connect, useForm } from '@src/utils';
+import {
+  Chat,
+  ChatHistory,
+  ChatHistoryItem as TChatHistoryItem,
+} from '@src/api/chats/types';
+import {
+  connectChatWebSocket,
+  getChatHistory,
+  getChatToken,
+} from '@src/api/chats';
+import userStore from '@src/stores/user/store';
+import { User } from '@src/api/user/types';
 
-/*
-
-Что осталось сделать:
-
-Приоритет:
-  1. Добавить валидацию на все формы
-      - Авторизация
-      - Регистрация
-      - Отправка смс
-      - Настройки пользователяы
-
-  2. Добавить класс для работы с запросами (уже написан). Просто скопировать
-  3. Пофиксить все TODO
-
-  В последнию очередь:
-    1. Добавить Eslint от airbnb
-    2. Настройить editorconfig
-    3. Добавить Stylelint
-
-  И отправлять на проверку
-
-*/
-
-export interface TChat {}
-
-interface ChatContentProps {
-  selectedChat: TChat | null;
+interface SendMessageProps {
+  socket: WebSocket;
 }
 
-export class ChatContent extends Block<ChatContentProps> {
-  constructor(props: ChatContentProps) {
+export class SendMessage extends Block<SendMessageProps> {
+  constructor(props: SendMessageProps) {
+    super(props);
+  }
+
+  protected init(): void {
+    const { socket } = this.props;
+
     const form = useForm({
       initialValues: {
         MessageInput: new Input({ placeholder: 'Сообщение', name: 'message' }),
-        SendButton: new Button({
-          variant: 'arrow',
-          arrow: 'right',
-          type: 'submit',
-        }),
       },
       validationSchema: {
         MessageInput: {
@@ -57,80 +45,225 @@ export class ChatContent extends Block<ChatContentProps> {
         },
       },
       onSubmit: (values) => {
-        console.log(values);
+        if (!socket) {
+          alert('Нету соединения');
+        } else {
+          socket.send(
+            JSON.stringify({ type: 'message', content: values.message }),
+          );
+        }
       },
     });
 
+    const sendMessageForm = new FormElement({
+      SendButton: new Button({
+        variant: 'arrow',
+        arrow: 'right',
+        type: 'submit',
+      }),
+      MessageInput: form.values.MessageInput,
+      className: 'chat-footer',
+      children: `
+            <div class="file-input">
+              ${PaperClip}
+            </div>
+            <div class="message-input">
+              {{{ MessageInput }}}
+            </div>
+            <div class="send-button">
+              {{{ SendButton }}}
+            </div>
+          `,
+      events: {
+        submit: form.handleSubmit,
+      },
+    });
+
+    this.children = { ...this.children, sendMessageForm };
+  }
+
+  protected render(): string {
+    return `
+      {{{ sendMessageForm }}}
+    `;
+  }
+}
+
+interface ChatContentProps {
+  selectedChat: Chat;
+}
+
+export class ChatContent extends Block<
+  ChatContentProps,
+  { socket: WebSocket; history: ChatHistory; user: User }
+> {
+  constructor(
+    props: ChatContentProps,
+    state: { socket: WebSocket; history: ChatHistory; user: User },
+  ) {
+    console.log(state, 'state');
+    super(props, state);
+
+    getChatToken(props.selectedChat.id)
+      .then(({ token }) => {
+        return connectChatWebSocket(
+          state.user.id,
+          props.selectedChat.id,
+          token,
+        );
+      })
+      .then((socket) => {
+        this.setState({ socket });
+
+        socket.addEventListener('open', () => {
+          console.log('Соединение установлено');
+
+          socket.send(
+            JSON.stringify({
+              content: '0',
+              type: 'get old',
+            }),
+          );
+        });
+
+        socket.addEventListener('close', (event) => {
+          if (event.wasClean) {
+            console.log('Соединение закрыто чисто');
+          } else {
+            console.log('Обрыв соединения');
+          }
+
+          console.log(`Код: ${event.code} | Причина: ${event.reason}`);
+        });
+
+        socket.addEventListener('message', (event) => {
+          const data = JSON.parse(event.data);
+          console.log('Получены данные', data);
+
+          if (Array.isArray(data)) {
+            this.setState({ history: data.reverse() });
+          } else {
+            this.setState((prev) => {
+              return { ...prev, history: [...prev.history, data] };
+            });
+          }
+        });
+
+        socket.addEventListener('error', (event) => {
+          console.log('Ошибка', event.message);
+        });
+
+        return socket;
+      })
+      .catch(alert);
+  }
+
+  protected init(): void {
+    const { selectedChat } = this.props;
+    const { history = [], socket, user } = this.state;
+
+    const historyChat = new HistoryChat({
+      chat: selectedChat,
+      history,
+      user,
+    });
+    const sendMessage = new SendMessage({
+      socket,
+    });
+
+    this.children = { ...this.children, historyChat, sendMessage };
+  }
+
+  protected render(): string {
+    return `
+      <div class="content__wrapper">
+          {{{ historyChat }}}
+          {{{ sendMessage }}} 
+      </div>
+    `;
+  }
+}
+
+export const ChatContentComponent = connect(
+  (state) => ({ user: state }),
+  userStore,
+)(ChatContent);
+
+interface HistoryChatProps {
+  chat: Chat;
+  history?: ChatHistory;
+  user: User;
+}
+
+export class HistoryChat extends Block<HistoryChatProps> {
+  constructor(props: HistoryChatProps) {
+    console.log(props);
     super({
       ...props,
-      SendMessageForm: new FormElement({
-        SendButton: form.values.SendButton,
-        MessageInput: form.values.MessageInput,
-        className: 'chat-footer',
-        children: `
-          <div class="file-input">
-            ${PaperClip}
-          </div>
-          <div class="message-input">
-            {{{ MessageInput }}}
-          </div>
-          <div class="send-button">
-            {{{ SendButton }}}
-          </div>
-        `,
-        events: {
-          submit: form.handleSubmit,
-        },
+      history: props.history?.map((item) => {
+        return new ChatHistoryItem({ ...item, user: props.user });
       }),
     });
   }
 
   protected render(): string {
-    const { selectedChat } = this.props;
+    const { chat } = this.props;
 
     return `
-        <div class="content__wrapper">
-        ${renderIf(
-          selectedChat,
-          `<div class="chat-header">
-        <div class="chat-header__avatar-and-name">
-            <div class="avatar"></div>
-            <h4>Андрей</h4>
-        </div>
-        <div class="chat-button__menu">
-            ${DotsVertical}
-        </div>
-    </div>
-    <div class="chat-body">
-      <div class="history-message-june-19">
-        <h5 class="history-date">
-         19 июня
-        </h5>
-        <div class="messages">
-          <div class="received-messages">
-            <div class="message received-message">
-              Привет! Смотри, тут всплыл интересный кусок лунной космической истории — НАСА в какой-то момент попросила Хассельблад адаптировать модель SWC для полетов на Луну. Сейчас мы все знаем что астронавты летали с моделью 500 EL — и к слову говоря, все тушки этих камер все еще находятся на поверхности Луны, так как астронавты с собой забрали только кассеты с пленкой.
-
-              Хассельблад в итоге адаптировал SWC для космоса, но что-то пошло не так и на ракету они так никогда и не попали. Всего их было произведено 25 штук, одну из них недавно продали на аукционе за 45000 евро.
-              <span class="message-time">11:56</span>
-            </div>
+      <div>
+        <div class="chat-header">
+          <div class="chat-header__avatar-and-name">
+              <div class="avatar">
+                ${renderIf(chat.avatar, `<img src="${chat.avatar}" alt="avatar" />`, '<div class="stub_avatar"></div>')}
+              </div>
+              <h4>${chat.title}</h4>
           </div>
-         <div class="sent-messages">
-            <div class="message sent-message">
-              Круто!
-              <span class="message-time">11:56</span>
-            </div>
-         </div>
+          <div class="chat-button__menu">
+              ${DotsVertical}
+          </div>
+        </div>
+        <div class="chat-body">
+          {{{history}}}
         </div>
       </div>
-    </div>
-    {{{ SendMessageForm }}}
-    `,
-          `<div class="stub">
-            Выберите чат чтобы отправить сообщение
-          </div>`,
-        )}
-        </div>
         `;
+  }
+}
+
+interface ChatHistoryItemProps extends TChatHistoryItem {
+  user: User;
+}
+
+export class ChatHistoryItem extends Block<ChatHistoryItemProps> {
+  constructor(props: ChatHistoryItemProps, state: any = {}) {
+    super(props, state);
+  }
+
+  protected render(): string {
+    const { content, time, user_id, user } = this.props;
+
+    return `
+      <div class="messages">
+      ${renderIf(
+        user_id !== user.id,
+        `
+        <div class="received-messages">
+          <div class="message received-message">
+            ${content}
+            <span class="message-time">${new Date(time).toLocaleTimeString().slice(1, 5)}</span>
+          </div>
+        </div>
+      `,
+        `
+        <div class="sent-messages">
+            <div class="message sent-message">
+            ${content}
+            <span class="message-time">${new Date(time).toLocaleTimeString().slice(1, 5)}</span>
+            </div>
+        </div>
+      `,
+      )}
+      </div>
+    `;
   }
 }
