@@ -1,12 +1,14 @@
 //TODO: Доработать TypeScript
 
-interface UseFormProps<T extends Record<string, any>> {
+import { Input } from '@src/components';
+
+interface UseFormProps<T extends Record<string, Input>> {
   initialValues: T;
   validationSchema: Record<string, { messageError: string; regexp: RegExp }>;
   onSubmit: (values: T) => void;
 }
 
-export const useForm = <T extends Record<string, any>>({
+export const useForm = <T extends Record<string, Input>>({
   initialValues,
   validationSchema,
   onSubmit,
@@ -25,7 +27,7 @@ export const useForm = <T extends Record<string, any>>({
     }
   };
 
-  const handleChange = (event: Event, { component }) => {
+  const handleChange = (event: Event, { name, component }) => {
     const target = event.target as HTMLInputElement;
 
     component.setProps({ value: target.value });
@@ -35,6 +37,20 @@ export const useForm = <T extends Record<string, any>>({
     const target = event.target as HTMLInputElement;
 
     validationField(target.value, { name, component });
+  };
+
+  const getValuesAfterSubmit = () => {
+    const newValues = {};
+
+    Object.keys(values).forEach((key) => {
+      const component = values[key];
+      const value = component.props.value;
+      const name = component.props.name;
+
+      newValues[name] = value;
+    });
+
+    return newValues as typeof values;
   };
 
   // TODO: Выводить поля value с данными. Сделаю на 3 этапе
@@ -52,13 +68,12 @@ export const useForm = <T extends Record<string, any>>({
       }
     }
 
-    onSubmit(values);
+    onSubmit(getValuesAfterSubmit());
   };
 
   Object.entries(values).forEach(([name, component]) => {
     if (component) {
       component.setProps({
-        //TODO: Починить 2 ререндера компонента. Потому что мы под капотом вызываем InputElement и передаем пропсы Input, который передает InputElement
         inputEvents: {
           blur: (event) => handleBlur(event, { name, component }),
           change: (event) => handleChange(event, { name, component }),
