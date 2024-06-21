@@ -1,25 +1,19 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck // TODO: Поправить типы
-
 import { nanoid } from 'nanoid';
 import Handlebars from 'handlebars';
 import EventBus from './event-bus';
 
-export interface Events {
+export interface Events<T extends HTMLElement = HTMLElement> {
   events?: Partial<{
     [K in keyof HTMLElementEventMap]: (
-      this: HTMLElement, // TODO: Подумать над реализацией дженерика для евентов
+      this: T,
       ev: HTMLElementEventMap[K],
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ) => any;
+    ) => void;
   }>;
 }
 
-// TODO: Добавить пропс state для хранения локального состояния у компонента
+type IProps = object & Events;
 
-type IProps = Record<string | symbol, any> & Events;
-
-class Block<Props extends IProps = IProps> {
+class Block<T extends IProps = IProps, S extends object = object> {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
@@ -29,34 +23,36 @@ class Block<Props extends IProps = IProps> {
   };
 
   public id = nanoid(6);
-  protected props: Props;
-  private children: Record<string, Block<IProps>> = {};
+  protected props: T;
+  protected state: S;
+  protected children: Record<string | symbol, Block> = {};
   private eventBus: () => EventBus;
   private _element: HTMLElement | null = null;
   private _setUpdate = false;
 
-  constructor(props: Props = {} as Props) {
+  constructor(props: T = {} as T, state: S = {} as S) {
     const eventBus = new EventBus();
 
     this.props = this._makePropsProxy(props);
+    this.state = this._makeStateProxy(state);
     this._makeChildren(props);
 
     this.eventBus = () => eventBus;
-
-    this._registerEvents(eventBus);
-
+    this._registerEvents();
     eventBus.emit(Block.EVENTS.INIT);
   }
 
-  _makePropsProxy(props: Props) {
+  _makePropsProxy(props: T) {
     return new Proxy(props, {
       get(target, prop) {
-        const value = target[prop];
+        const value = (target as { [index: string]: unknown })[prop as string];
         return typeof value === 'function' ? value.bind(target) : value;
       },
       set: (target, prop, value) => {
-        if (target[prop] !== value) {
-          target[prop] = value;
+        if (
+          (target as { [index: string]: unknown })[prop as string] !== value
+        ) {
+          (target as { [index: string]: unknown })[prop as string] = value;
           this._setUpdate = true;
         }
 
@@ -68,8 +64,29 @@ class Block<Props extends IProps = IProps> {
     });
   }
 
-  // TODO: Нужно ли возвращать новую ссылку на children?
-  _makeChildren(props: Props) {
+  _makeStateProxy(state: S) {
+    return new Proxy(state, {
+      get(target, prop) {
+        const value = (target as { [index: string]: unknown })[prop as string];
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+      set: (target, prop, value) => {
+        if (
+          (target as { [index: string]: unknown })[prop as string] !== value
+        ) {
+          (target as { [index: string]: unknown })[prop as string] = value;
+          this._setUpdate = true;
+        }
+
+        return true;
+      },
+      deleteProperty() {
+        throw new Error('Нет доступа');
+      },
+    });
+  }
+
+  _makeChildren(props: T) {
     Object.entries(props).forEach(([key, value]) => {
       if (value instanceof Block) {
         this.children[key] = value;
@@ -77,7 +94,8 @@ class Block<Props extends IProps = IProps> {
     });
   }
 
-  _registerEvents(eventBus: EventBus) {
+  _registerEvents() {
+    const eventBus = this.eventBus();
     eventBus.on(Block.EVENTS.INIT, this._init.bind(this));
     eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
     eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
@@ -89,6 +107,8 @@ class Block<Props extends IProps = IProps> {
     const { events = {} } = this.props;
 
     Object.keys(events).forEach((eventName) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this._element?.addEventListener(eventName, events[eventName]);
     });
   }
@@ -97,13 +117,14 @@ class Block<Props extends IProps = IProps> {
     const { events = {} } = this.props;
 
     Object.keys(events).forEach((eventName) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this._element?.removeEventListener(eventName, events[eventName]);
     });
   }
 
   private _init() {
     this.init();
-
     this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
   }
 
@@ -124,13 +145,33 @@ class Block<Props extends IProps = IProps> {
     );
   }
 
-  private _componentDidUpdate(oldProps: any, newProps: any) {
+  private _componentDidUpdate(oldProps: T, newProps: T) {
     if (this.componentDidUpdate(oldProps, newProps)) {
       this.eventBus().emit(Block.EVENTS.INIT);
+      // Object.values(this.children).forEach((component) => {
+      //
+      //   const childrenOldProps = { ...component.props };
+      //   const childrenNewProps = {};
+
+      //   Object.keys(newProps).forEach((prop) => {
+      //     // Тут может быть undefiend | null, но пропс все таки есть. То как быть?
+      //     const existingProp = childrenOldProps[prop];
+
+      //     if (existingProp) {
+      //       childrenNewProps[prop] = existingProp;
+      //     }
+      //   });
+
+      //   console.log(childrenNewProps, 'newProps');
+
+      //   component
+      //     .eventBus()
+      //     .emit(Block.EVENTS.FLOW_CDU, childrenOldProps, childrenNewProps);
+      // });
     }
   }
 
-  protected componentDidUpdate(oldProps: any, newProps: any) {
+  protected componentDidUpdate(oldProps: T, newProps: T) {
     return JSON.stringify(oldProps) !== JSON.stringify(newProps);
   }
 
@@ -151,7 +192,7 @@ class Block<Props extends IProps = IProps> {
 
   componentWillUnmount() {}
 
-  setProps(newProps: Props & Record<string, unknown>) {
+  setProps(newProps: T) {
     if (!newProps) return;
 
     this._setUpdate = false;
@@ -161,10 +202,26 @@ class Block<Props extends IProps = IProps> {
 
     if (this._setUpdate) {
       this.eventBus().emit(Block.EVENTS.FLOW_CDU, oldProps, newProps);
-      Object.values(this.children).forEach((children) => {
-        const oldProps = { ...children.props };
-        children.eventBus().emit(Block.EVENTS.FLOW_CDU, oldProps, newProps);
-      });
+    }
+  }
+  setState(fnOrState: Partial<S> | Function) {
+    let newState = {};
+
+    if (fnOrState instanceof Function) {
+      newState = fnOrState(this.state);
+    } else {
+      newState = fnOrState;
+    }
+
+    if (!newState) return;
+
+    this._setUpdate = false;
+    const oldState = { ...this.state };
+
+    Object.assign(this.state, newState);
+
+    if (this._setUpdate) {
+      this.eventBus().emit(Block.EVENTS.FLOW_CDU, oldState, newState);
     }
   }
 
@@ -188,21 +245,38 @@ class Block<Props extends IProps = IProps> {
     this._addEvents();
   }
 
-  private compile(template: string, context: Props) {
+  private compile(template: string, context: T) {
     const propsAndStubs = {
       ...context,
     };
 
     Object.entries(this.children).forEach(([key, child]) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       propsAndStubs[key] = `<div data-id="${child.id}"></div>`;
+    });
+
+    const childrenProps: Block[] = [];
+    Object.entries(propsAndStubs).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        propsAndStubs[key] = value
+          .map((item) => {
+            if (item instanceof Block) {
+              childrenProps.push(item);
+              return `<div data-id="${item.id}"></div>`;
+            }
+
+            return item;
+          })
+          .join('');
+      }
     });
 
     const html = Handlebars.compile(template)(propsAndStubs);
     const temp = document.createElement('template');
-
     temp.innerHTML = html;
 
-    Object.values(this.children).forEach((child) => {
+    [...Object.values(this.children), ...childrenProps].forEach((child) => {
       const stub = temp.content.querySelector(`[data-id="${child.id}"]`);
       stub?.replaceWith(child.getContent()!);
     });
@@ -230,11 +304,15 @@ class Block<Props extends IProps = IProps> {
   }
 
   show() {
-    this.getContent()!.style.display = 'block';
+    const block = this.getContent();
+    if (!block) return;
+    block.style.display = 'block';
   }
 
   hide() {
-    this.getContent()!.style.display = 'none';
+    const block = this.getContent();
+    if (!block) return;
+    block.style.display = 'none';
   }
 }
 
