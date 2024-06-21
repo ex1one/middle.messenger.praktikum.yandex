@@ -8,6 +8,7 @@ import {
   Button,
   Input,
   UploadProfileLogoModal,
+  Space,
 } from '@src/components';
 import { AccountLayout } from '@src/templates';
 
@@ -19,79 +20,95 @@ import {
 } from './components';
 import SCHEMAS from '@src/schemas';
 import { useForm } from '@src/utils';
+import {
+  logoutThunk,
+  updateUserPasswordThunk,
+  updateUserProfileThunk,
+} from '@src/stores/user/thunks';
+import { connect } from '../../utils/connect';
+import userStore from '@src/stores/user/store';
+
+/* 
+  Можно например когда меняется локальное состояние компонента через this.setState
+  Вызывать метод CDU и п если пропсы меняются вызывать метод FLOW_RENDER + вызывать FLOW_RENDER у children всех
+
+*/
 
 export class Profile extends Block {
-  constructor(props) {
-    super({
-      ...props,
+  constructor(props, state) {
+    // TODO: Добавить возможность добавлять null в props и сделать типизированный state
+    super(props, {
+      ...state,
+      profileLogo: null,
       isEditProfileData: false,
       isEditPassword: false,
-      isOpenUploadModal: false,
+      isOpen: false,
     });
   }
 
-  protected init(): void {
+  // TODO: У нас каждый раз создаются новые компоненты при изменении пропсов или state. А нужно, чтобы они обновлялись исходя из изменение пропсов
+  protected init() {
     const formProfile = useForm({
       initialValues: {
         InputEmail: new Input({
           variant: 'transparent',
           color: 'dark-gray',
           name: 'email',
-          value: 'pochta@yandex.ru',
+          value: this.state.email,
           textAlign: 'right',
-          readonly: !this.props.isEditProfileData,
+          readonly: !this.state.isEditProfileData,
         }),
         InputLogin: new Input({
           variant: 'transparent',
           color: 'dark-gray',
           name: 'login',
-          value: 'ivanivanov',
+          value: this.state.login,
           textAlign: 'right',
-          readonly: !this.props.isEditProfileData,
+          readonly: !this.state.isEditProfileData,
         }),
-        InputName: new Input({
+        InputFirstName: new Input({
           variant: 'transparent',
           color: 'dark-gray',
           name: 'first_name',
-          value: 'Иван',
+          value: this.state.first_name,
           textAlign: 'right',
-          readonly: !this.props.isEditProfileData,
+          readonly: !this.state.isEditProfileData,
         }),
         InputSecondName: new Input({
           variant: 'transparent',
           color: 'dark-gray',
           name: 'second_name',
-          value: 'Иванов',
+          value: this.state.second_name,
           textAlign: 'right',
-          readonly: !this.props.isEditProfileData,
+          readonly: !this.state.isEditProfileData,
         }),
         InputDisplayName: new Input({
           variant: 'transparent',
           color: 'dark-gray',
           name: 'display_name',
-          value: 'Иван',
+          value: this.state?.display_name ?? '-',
           textAlign: 'right',
-          readonly: !this.props.isEditProfileData,
+          readonly: !this.state.isEditProfileData,
         }),
         InputPhone: new Input({
           variant: 'transparent',
           color: 'dark-gray',
           name: 'phone',
-          value: '+79099673030',
+          value: this.state.phone,
           textAlign: 'right',
-          readonly: !this.props.isEditProfileData,
+          readonly: !this.state.isEditProfileData,
         }),
       },
       validationSchema: {
         InputEmail: SCHEMAS.USER.EMAIL,
         InputLogin: SCHEMAS.USER.LOGIN,
-        InputName: SCHEMAS.USER.NAME,
+        InputFirstName: SCHEMAS.USER.FIRST_NAME,
         InputSecondName: SCHEMAS.USER.SECOND_NAME,
         InputPhone: SCHEMAS.USER.PHONE,
       },
-      onSubmit: (values) => {
-        console.log(values, 'values');
-        this.setProps({ isEditProfileData: false });
+      onSubmit: async (values) => {
+        await updateUserProfileThunk(values);
+        this.setState({ isEditProfileData: false });
       },
     });
 
@@ -100,54 +117,55 @@ export class Profile extends Block {
         InputOldPassword: new Input({
           variant: 'transparent',
           color: 'dark-gray',
-          name: 'old_password',
-          value: 'password',
+          name: 'oldPassword',
+          value: '',
           textAlign: 'right',
           type: 'password',
         }),
         InputNewPassword: new Input({
           variant: 'transparent',
           color: 'dark-gray',
-          name: 'new_password',
-          value: 'password123',
+          name: 'newPassword',
+          value: '',
           textAlign: 'right',
           type: 'password',
         }),
         InputConfirmNewPassword: new Input({
           variant: 'transparent',
           color: 'dark-gray',
-          name: 'confirm_new_password',
-          value: 'password123',
+          name: 'confirmNewPassword',
+          value: '',
           textAlign: 'right',
           type: 'password',
         }),
       },
       validationSchema: {
-        InputEmail: SCHEMAS.USER.EMAIL,
-        InputLogin: SCHEMAS.USER.LOGIN,
-        InputName: SCHEMAS.USER.NAME,
-        InputSecondName: SCHEMAS.USER.SECOND_NAME,
-        InputPhone: SCHEMAS.USER.PHONE,
+        InputOldPassword: SCHEMAS.USER.PASSWORD,
+        InputNewPassword: SCHEMAS.USER.PASSWORD,
+        InputConfirmNewPassword: SCHEMAS.USER.PASSWORD,
       },
-      onSubmit: (values) => {
-        this.setProps({ isEditPassword: false });
-        console.log(values, 'values');
+      onSubmit: async (values) => {
+        const { confirmNewPassword, ...other } = values;
+
+        await updateUserPasswordThunk(other);
+        this.setState({ isEditPassword: false });
       },
     });
 
     const ProfileLayout = new AccountLayout({
       children: new ProfileContainer({
         ProfileLogo: new ProfileLogo({
-          name: 'Иван',
-          events: {
+          avatar: this.state.avatar,
+          name: this.state.first_name,
+          logoEvents: {
             click: () => {
-              this.setProps({
-                isOpenUploadModal: !this.props.isEditProfileData,
+              this.setState({
+                isOpenUploadModal: !this.state.isEditProfileData,
               });
             },
           },
         }),
-        ProfileData: this.props.isEditPassword
+        ProfileData: this.state.isEditPassword
           ? new ProfileData({
               OldPasswordProfileItem: new ProfileItem({
                 name: 'Старый пароль',
@@ -173,7 +191,7 @@ export class Profile extends Block {
               }),
               FirstNameProfileItem: new ProfileItem({
                 name: 'Имя',
-                Input: formProfile.values.InputName,
+                Input: formProfile.values.InputFirstName,
               }),
               SecondNameProfileItem: new ProfileItem({
                 name: 'Фамилия',
@@ -189,8 +207,21 @@ export class Profile extends Block {
               }),
             }),
         ProfileActions:
-          this.props.isEditPassword || this.props.isEditProfileData
+          this.state.isEditPassword || this.state.isEditProfileData
             ? new ProfileActions({
+                CancelProfileButton: new Button({
+                  text: 'Отменить',
+                  color: 'red',
+                  events: {
+                    click: () => {
+                      this.setState({
+                        isEditPassword: false,
+                        isEditProfileData: false,
+                      });
+                    },
+                  },
+                }),
+                SpaceBlock: new Space(),
                 SaveProfileButton: new Button({
                   text: 'Сохранить',
                   type: 'submit',
@@ -203,8 +234,8 @@ export class Profile extends Block {
                   events: {
                     click: () => {
                       console.log('change profile data');
-                      this.setProps({
-                        isEditProfileData: !this.props.isEditProfileData,
+                      this.setState({
+                        isEditProfileData: !this.state.isEditProfileData,
                       });
                     },
                   },
@@ -216,8 +247,8 @@ export class Profile extends Block {
                   events: {
                     click: () => {
                       console.log('change password');
-                      this.setProps({
-                        isEditPassword: !this.props.isEditProfileData,
+                      this.setState({
+                        isEditPassword: !this.state.isEditProfileData,
                       });
                     },
                   },
@@ -228,12 +259,14 @@ export class Profile extends Block {
                   variant: 'link',
                   color: 'red',
                   events: {
-                    click: () => console.log('Exit'),
+                    click: () => {
+                      logoutThunk().catch(alert);
+                    },
                   },
                 }),
               }),
         events: {
-          submit: this.props.isEditPassword
+          submit: this.state.isEditPassword
             ? formPassword.handleSubmit
             : formProfile.handleSubmit,
         },
@@ -241,12 +274,8 @@ export class Profile extends Block {
     });
 
     const UploadModal = new UploadProfileLogoModal({
-      isOpen: this.props.isOpenUploadModal,
-      onClose: () => this.setProps({ isOpenUploadModal: false }),
-      value: null,
-      onChange: (value) => {
-        console.log(value);
-      },
+      isOpen: this.state.isOpenUploadModal,
+      onClose: () => this.setState({ isOpenUploadModal: false }),
     });
 
     this.children = {
@@ -264,3 +293,5 @@ export class Profile extends Block {
     `;
   }
 }
+
+export const ProfilePage = connect((state) => state, userStore)(Profile);
