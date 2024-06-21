@@ -1,7 +1,7 @@
+import { FileInput } from '@src/components';
 import './modal.css';
 
 import { Block, Events } from '@src/core';
-
 import { renderIf } from '@src/helpers';
 
 export interface IModalProps {
@@ -9,6 +9,7 @@ export interface IModalProps {
   onClose: VoidFunction;
   withCloseButton?: boolean;
   children?: string;
+  Overlay?: ModalOverlay;
 }
 
 export class Modal extends Block<IModalProps> {
