@@ -13,6 +13,14 @@ import { PATHES } from '@src/consts';
 export const signInThunk = async (data: SignInRequestData) => {
   const response = await API.user.signIn(data);
   if (apiHasError(response)) {
+    if (response.reason.includes('User already in system')) {
+      router.go(PATHES.Chats);
+      const user = await API.user.getUser();
+      userStore.set(user);
+
+      return;
+    }
+
     throw new Error(response.reason);
   }
   const user = await API.user.getUser();
