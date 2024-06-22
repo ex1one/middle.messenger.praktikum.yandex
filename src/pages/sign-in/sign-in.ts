@@ -34,7 +34,13 @@ export class SignIn extends Block {
       onSubmit: (values: SignInRequestData) => {
         signInThunk(values)
           .then(() => router.go(PATHES.Chats))
-          .catch(alert);
+          .catch((error) => {
+            if (error.includes('User already in system')) {
+              router.go(PATHES.Chats);
+            } else {
+              alert(error);
+            }
+          });
       },
     });
 
