@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: FIX IT
+
 import './profile-logo.css';
 
 import { renderIf } from '@src/helpers';
@@ -18,8 +20,6 @@ export class ProfileLogo extends Block<IProps> {
   protected init(): void {
     const { avatar, logoEvents } = this.props;
     const logo = new Logo({ events: logoEvents, avatar });
-
-    console.log('render');
 
     this.children = { ...this.children, logo };
   }

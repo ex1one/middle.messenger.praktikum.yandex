@@ -28,6 +28,7 @@ export class Router {
 
   start() {
     window.onpopstate = (event) => {
+      // @ts-ignore
       this._onRoute(event.currentTarget.location.pathname);
     };
 

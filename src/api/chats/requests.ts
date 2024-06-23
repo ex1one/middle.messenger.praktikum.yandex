@@ -1,9 +1,13 @@
+import { User } from './../user/types';
 import {
+  AddUserToChatRequestData,
   CreateChatRequestData,
   CreateChatResponseData,
+  DeleteUserFromChatRequestData,
   GetChatsParams,
   GetChatTokenRequestData,
   GetChatTokenResponseData,
+  GetChatUsersRequestData,
   TChats,
 } from '@src/api/chats/types';
 import { YandexApi, YandexWS } from '@src/api/config/urls';
@@ -24,6 +28,27 @@ export const getChatToken = (chatId: GetChatTokenRequestData) => {
   return myFetch.post<GetChatTokenResponseData>(
     BASE_URL + '/chats' + `/token/${chatId}`,
   );
+};
+
+export const addNewUserToChat = (data: AddUserToChatRequestData) => {
+  return myFetch.put(BASE_URL + '/chats' + '/users', {
+    data: { users: [data.userId], chatId: data.chatId },
+  });
+};
+
+export const getChatUsers = (data: GetChatUsersRequestData) => {
+  return myFetch.get<User[]>(
+    BASE_URL + '/chats' + `${data.chatId}` + '/users',
+    {
+      data,
+    },
+  );
+};
+
+export const deleteUserFromChat = (data: DeleteUserFromChatRequestData) => {
+  return myFetch.delete(BASE_URL + '/chats' + '/users', {
+    data: { users: [data.userId], chatId: data.chatId },
+  });
 };
 
 export const connectChatWebSocket = (

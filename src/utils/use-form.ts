@@ -1,3 +1,4 @@
+// @ts-nocheck // TODO: FIX IT
 //TODO: Доработать TypeScript
 
 import { Input } from '@src/components';

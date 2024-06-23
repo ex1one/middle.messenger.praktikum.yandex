@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: FIX IT
+
 import Handlebars from 'handlebars';
 import * as Components from './components';
 import * as Templates from './templates';

@@ -42,4 +42,27 @@ export type CreateChatResponseData = Pick<Chat, 'id'>;
 
 // GET TOKEN
 export type GetChatTokenRequestData = Chat['id'];
-export type GetChatTokenResponseData = { token: string };
+export interface GetChatTokenResponseData {
+  token: string;
+}
+
+// ADD USER TO CHAT
+export interface AddUserToChatRequestData {
+  userId: number;
+  chatId: number;
+}
+
+// DELETE USER FROM CHAT
+export interface DeleteUserFromChatRequestData {
+  userId: number;
+  chatId: number;
+}
+
+// GET CHAT USERS
+export interface GetChatUsersRequestData {
+  chatId: number;
+  offset?: number;
+  limit?: number;
+  email?: string;
+  name?: string;
+}

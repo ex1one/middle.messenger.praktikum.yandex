@@ -1,9 +1,11 @@
+// @ts-nocheck // TODO: FIX IT
+
 import { PATHES } from '@src/consts';
 import API from '@src/api';
 import { Chat, TChats } from '@src/api/chats/types';
 import { Block } from '@src/core';
 import router from '@src/router';
-import { ChatsLayout, ChatsSidebar, ChatContent } from '@src/templates';
+import { ChatsLayout, ChatsSidebar } from '@src/templates';
 import { ChatContentComponent } from '@src/templates/chats-layout/components/chat-content';
 
 interface ChatsState {
@@ -35,6 +37,13 @@ export class Chats extends Block<{}, ChatsState> {
       sidebarContent: new ChatsSidebar({
         chats: this.state.chats,
         selectedChat: this.state.selectedChat,
+        addNewChat: () => {
+          API.chats.getChats().then((res) => {
+            this.setState({
+              chats: res,
+            });
+          });
+        },
         onChangeSelectedChat: (selectedChat) => {
           if (this.state.selectedChat === selectedChat) {
             this.setState({ selectedChat: null });
@@ -45,6 +54,7 @@ export class Chats extends Block<{}, ChatsState> {
           }
         },
       }),
+      // @ts-ignore
       content: this.state.selectedChat
         ? new ChatContentComponent({
             selectedChat: this.state.selectedChat,

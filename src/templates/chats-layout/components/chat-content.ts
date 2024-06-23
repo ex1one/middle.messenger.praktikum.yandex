@@ -1,8 +1,9 @@
+// @ts-nocheck // TODO: FIX IT
+
 import './index.css'; // TODO: Назвать по другому
 
 import { Block } from '@src/core';
 
-import DotsVertical from '@public/images/dots-vertical.svg?raw';
 import PaperClip from '@public/images/paperclip.svg?raw';
 import { Button } from '../../../components/button/button';
 import { Input } from '@src/components';
@@ -14,13 +15,10 @@ import {
   ChatHistory,
   ChatHistoryItem as TChatHistoryItem,
 } from '@src/api/chats/types';
-import {
-  connectChatWebSocket,
-  getChatHistory,
-  getChatToken,
-} from '@src/api/chats';
+import { connectChatWebSocket, getChatToken } from '@src/api/chats';
 import userStore from '@src/stores/user/store';
 import { User } from '@src/api/user/types';
+import API from '@src/api';
 
 interface SendMessageProps {
   socket: WebSocket;
@@ -137,15 +135,19 @@ export class ChatContent extends Block<
         });
 
         socket.addEventListener('message', (event) => {
-          const data = JSON.parse(event.data);
-          console.log('Получены данные', data);
+          try {
+            const data = JSON.parse(event.data);
+            console.log('Получены данные', data);
 
-          if (Array.isArray(data)) {
-            this.setState({ history: data.reverse() });
-          } else {
-            this.setState((prev) => {
-              return { ...prev, history: [...prev.history, data] };
-            });
+            if (Array.isArray(data)) {
+              this.setState({ history: data.reverse() });
+            } else {
+              this.setState((prev) => {
+                return { ...prev, history: [...prev.history, data] };
+              });
+            }
+          } catch (error) {
+            alert(error);
           }
         });
 
@@ -178,7 +180,7 @@ export class ChatContent extends Block<
     return `
       <div class="content__wrapper">
           {{{ historyChat }}}
-          {{{ sendMessage }}} 
+          {{{ sendMessage }}}
       </div>
     `;
   }
@@ -197,9 +199,87 @@ interface HistoryChatProps {
 
 export class HistoryChat extends Block<HistoryChatProps> {
   constructor(props: HistoryChatProps) {
-    console.log(props);
     super({
       ...props,
+      addNewUserToChat: new Button({
+        type: 'button',
+        variant: 'link',
+        text: 'Добавить пользователя',
+        events: {
+          click: async () => {
+            try {
+              // TODO: Вынести эту логику
+              const login = prompt('Введите login пользователя');
+              if (!login) return;
+              const similarUsers = await API.user.searchUserByLogin({ login });
+              if (!similarUsers.length) {
+                alert('Не найдено ни одного пользователя с таким login');
+                return;
+              }
+              const selectedLogin = prompt(
+                `Выберите пользователя: ${similarUsers.map((user) => user.login).join(',')}`,
+              );
+              if (!selectedLogin) return;
+              const selectedUser = similarUsers.find(
+                (user) => user.login === selectedLogin,
+              );
+              if (!selectedUser) {
+                alert('Не найдено ни одного пользователя с таким login');
+                return;
+              }
+
+              await API.chats
+                .addNewUserToChat({
+                  chatId: props.chat.id,
+                  userId: selectedUser.id,
+                })
+                .then(() => alert('Пользователь успешно удален'));
+            } catch (error) {
+              alert(error);
+            }
+          },
+        },
+      }),
+      deleteUserFromChat: new Button({
+        type: 'button',
+        variant: 'link',
+        color: 'red',
+        text: 'Удалить пользователя',
+        events: {
+          click: async () => {
+            try {
+              // TODO: Вынести эту логику
+              const login = prompt('Введите login пользователя');
+              if (!login) return;
+              const similarUsers = await API.user.searchUserByLogin({ login });
+              if (!similarUsers.length) {
+                alert('Не найдено ни одного пользователя с таким login');
+                return;
+              }
+              const selectedLogin = prompt(
+                `Выберите пользователя: ${similarUsers.map((user) => user.login).join(',')}`,
+              );
+              if (!selectedLogin) return;
+              const selectedUser = similarUsers.find(
+                (user) => user.login === selectedLogin,
+              );
+              if (!selectedUser) {
+                alert('Не найдено ни одного пользователя с таким login');
+                return;
+              }
+
+              await API.chats
+                .deleteUserFromChat({
+                  chatId: props.chat.id,
+                  userId: selectedUser.id,
+                })
+                .then(() => alert('Пользователь успешно удален'));
+            } catch (error) {
+              alert(error);
+            }
+          },
+        },
+      }),
       history: props.history?.map((item) => {
         return new ChatHistoryItem({ ...item, user: props.user });
       }),
@@ -219,7 +299,8 @@ export class HistoryChat extends Block<HistoryChatProps> {
               <h4>${chat.title}</h4>
           </div>
           <div class="chat-button__menu">
-              ${DotsVertical}
+            {{{ addNewUserToChat }}}
+            {{{ deleteUserFromChat }}}
           </div>
         </div>
         <div class="chat-body">

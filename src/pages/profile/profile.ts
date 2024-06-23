@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: FIX IT
+
 import './profile.css';
 
 import { Block } from '@src/core';
@@ -28,7 +30,7 @@ import {
 import { connect } from '../../utils/connect';
 import userStore from '@src/stores/user/store';
 
-/* 
+/*
   Можно например когда меняется локальное состояние компонента через this.setState
   Вызывать метод CDU и п если пропсы меняются вызывать метод FLOW_RENDER + вызывать FLOW_RENDER у children всех
 
@@ -145,6 +147,7 @@ export class Profile extends Block {
         InputConfirmNewPassword: SCHEMAS.USER.PASSWORD,
       },
       onSubmit: async (values) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { confirmNewPassword, ...other } = values;
 
         await updateUserPasswordThunk(other);

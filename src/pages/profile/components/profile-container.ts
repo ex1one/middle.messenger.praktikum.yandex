@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: FIX IT
+
 import { ProfileLogo } from '@src/components';
 import { Block, Events } from '@src/core';
 

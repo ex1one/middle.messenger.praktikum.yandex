@@ -64,12 +64,16 @@ class HTTPTransport {
       xhr.ontimeout = reject;
 
       xhr.onload = () => {
-        if (xhr.status > 299) {
-          reject(xhr.responseText);
+        try {
+          if (xhr.status > 299) {
+            reject(xhr.responseText);
+          }
+          resolve(
+            isValidJSON(xhr.response) ? JSON.parse(xhr.response) : xhr.response,
+          );
+        } catch (error) {
+          reject(error);
         }
-        resolve(
-          isValidJSON(xhr.response) ? JSON.parse(xhr.response) : xhr.response,
-        );
       };
 
       if (method === METHODS.GET || !data) {

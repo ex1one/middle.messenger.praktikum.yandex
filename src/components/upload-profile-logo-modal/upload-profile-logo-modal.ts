@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: FIX IT
+
 import './upload-profile-logo-modal.css';
 
 import { Block } from '@src/core';

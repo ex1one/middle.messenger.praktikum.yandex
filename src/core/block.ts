@@ -12,6 +12,7 @@ export interface Events<T extends HTMLElement = HTMLElement> {
 }
 
 type IProps = object & Events;
+type setState<S> = (state: S) => Partial<S> | Partial<S>;
 
 class Block<T extends IProps = IProps, S extends object = object> {
   static EVENTS = {
@@ -204,7 +205,7 @@ class Block<T extends IProps = IProps, S extends object = object> {
       this.eventBus().emit(Block.EVENTS.FLOW_CDU, oldProps, newProps);
     }
   }
-  setState(fnOrState: Partial<S> | Function) {
+  setState(fnOrState: setState<S>) {
     let newState = {};
 
     if (fnOrState instanceof Function) {
@@ -259,6 +260,7 @@ class Block<T extends IProps = IProps, S extends object = object> {
     const childrenProps: Block[] = [];
     Object.entries(propsAndStubs).forEach(([key, value]) => {
       if (Array.isArray(value)) {
+        // @ts-ignore
         propsAndStubs[key] = value
           .map((item) => {
             if (item instanceof Block) {

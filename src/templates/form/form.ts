@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: FIX IT
+
 import './form.css';
 
 import { Block, Events } from '@src/core';

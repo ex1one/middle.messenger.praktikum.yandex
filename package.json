@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite",
     "start": "npm run build && node ./server.js",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "lint": "eslint --ignore-path .eslintignore --ext .ts",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(ts|json)\""
   },

@@ -1,4 +1,3 @@
-import { FileInput } from '@src/components';
 import './modal.css';
 
 import { Block, Events } from '@src/core';

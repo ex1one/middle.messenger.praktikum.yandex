@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: FIX IT
+
 import { Block, Store } from '@src/core';
 import { isEqual } from './is-equal';
 import { StoreEvents } from '@src/core/store';

@@ -2,6 +2,7 @@ import myFetch from '@src/api/my-fetch';
 
 import { YandexApi } from '../config/urls';
 import {
+  SearchUserByLoginRequestData,
   SignInRequestData,
   SignUpRequestData,
   SignUpResponseData,
@@ -29,6 +30,10 @@ export const getUser = () => {
 
 export const updateUserProfile = (data: Partial<User>) => {
   return myFetch.put<User>(BASE_URL + '/user/profile', { data });
+};
+
+export const searchUserByLogin = (data: SearchUserByLoginRequestData) => {
+  return myFetch.post<User[]>(BASE_URL + '/user' + '/search', { data });
 };
 
 // file = {avatar: binary} FormData

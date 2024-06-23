@@ -24,3 +24,7 @@ export interface UpdateUserPasswordRequestData {
   oldPassword: string;
   newPassword: string;
 }
+
+export interface SearchUserByLoginRequestData {
+  login: string;
+}

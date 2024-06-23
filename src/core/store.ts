@@ -23,7 +23,7 @@ export class Store<
     return this.state;
   }
 
-  public set(nextState: Partial<State>) {
+  public set(nextState: Partial<State> | null) {
     const prevState = { ...this.state };
 
     this.state = { ...this.state, ...nextState };
