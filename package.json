@@ -12,6 +12,7 @@
     "start": "npm run build && node ./server.js",
     "build": "tsc && vite build",
     "lint": "eslint --ignore-path .eslintignore --ext .ts",
+    "lint:style": "stylelint \"src/**/*.css\"",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(ts|json)\""
   },
   "dependencies": {
@@ -32,6 +33,8 @@
     "postcss-preset-env": "^9.5.4",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "^3.2.5",
+    "stylelint": "^16.6.1",
+    "stylelint-config-standard": "^36.0.1",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-handlebars": "^2.0.0"
