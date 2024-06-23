@@ -13,6 +13,7 @@
     "build": "tsc && vite build",
     "lint": "eslint --ignore-path .eslintignore --ext .ts",
     "lint:style": "stylelint \"src/**/*.css\"",
+    "lint:style-fix": "stylelint \"src/**/*.css\" --fix",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(ts|json)\""
   },
   "dependencies": {

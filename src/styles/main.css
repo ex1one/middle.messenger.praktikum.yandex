@@ -4,15 +4,11 @@
   --white: #fff;
   --main-color: #3369f3;
   --light-main-color: #e4edfd;
-
   --text-color: #1e1e1e;
-  --error-color: #ff0000;
-
-  --dark-gray-color: #999999;
+  --error-color: #f00;
+  --dark-gray-color: #999;
   --light-gray-color: #eaeaea;
-
   --input-error-color: #ff2f2f;
-
   --background-sidebar-color: #fbfbfb;
 
   /* VARIABLES */
@@ -22,7 +18,7 @@
 }
 
 * {
-  font-family: 'Inter', sans-serif;
+  font-family: Inter, sans-serif;
   font-weight: 500;
   box-sizing: border-box;
 }

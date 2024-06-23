@@ -57,7 +57,7 @@
 
 .input__container--underline {
   border-bottom: 1px solid var(--main-color);
-  padding: 0 0 7px 0;
+  padding: 0 0 7px;
 
   .input__label {
     will-change: font-size, transform;

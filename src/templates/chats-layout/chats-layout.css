@@ -9,8 +9,9 @@
   width: var(--sidebar-chats-width);
   background-color: var(--background-sidebar-color);
   border-right: 1px solid var(--light-gray-color);
+
   /* padding: 20px 10px 0px 10px; */
-  padding: 20px 0px 0px 0px;
+  padding: 20px 0 0;
 
   .sidebar__search {
     display: flex;
