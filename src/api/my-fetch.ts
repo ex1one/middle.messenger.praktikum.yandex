@@ -14,22 +14,26 @@ interface Options {
 }
 
 type OptionsWithoutMethod = Omit<Options, 'method'>;
+type HTTPMethod = <D = unknown>(
+  url: string,
+  options?: OptionsWithoutMethod,
+) => Promise<D>;
 
 class HTTPTransport {
-  get = <T>(url: string, options?: OptionsWithoutMethod) => {
-    return this.request<T>(url, { ...options, method: METHODS.GET });
+  get: HTTPMethod = (url, options) => {
+    return this.request(url, { ...options, method: METHODS.GET });
   };
 
-  put = <T>(url: string, options?: OptionsWithoutMethod) => {
-    return this.request<T>(url, { ...options, method: METHODS.PUT });
+  put: HTTPMethod = (url, options) => {
+    return this.request(url, { ...options, method: METHODS.PUT });
   };
 
-  post = <T>(url: string, options?: OptionsWithoutMethod) => {
-    return this.request<T>(url, { ...options, method: METHODS.POST });
+  post: HTTPMethod = (url, options) => {
+    return this.request(url, { ...options, method: METHODS.POST });
   };
 
-  delete = <T>(url: string, options?: OptionsWithoutMethod) => {
-    return this.request<T>(url, { ...options, method: METHODS.DELETE });
+  delete: HTTPMethod = (url, options) => {
+    return this.request(url, { ...options, method: METHODS.DELETE });
   };
 
   request<T>(url: string, options: Options): Promise<T> {
