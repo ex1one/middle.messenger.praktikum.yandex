@@ -9,6 +9,9 @@ import ProfileLogo from './profile-logo';
 import Modal from './modal';
 import FileInput from './file-input';
 import UploadProfileLogoModal from './upload-profile-logo-modal';
+import Link, { LinkProps } from './link';
+import NavLink from './nav-link';
+import Space from './space';
 
 export {
   Button,
@@ -19,8 +22,9 @@ export {
   InputElement,
   FileInput,
   UploadProfileLogoModal,
+  Link,
+  NavLink,
+  Space,
 };
 
-export { type InputProps, InputElementProps };
-
-export { Navigate } from './navigate';
+export { type InputProps, type InputElementProps, type LinkProps };

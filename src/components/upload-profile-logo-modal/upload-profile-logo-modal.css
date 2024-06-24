@@ -1,5 +1,6 @@
 .form-modal {
   text-align: center;
+
   & .header {
     & h4 {
       font-size: 15px;
@@ -7,9 +8,11 @@
       line-height: 20px;
     }
   }
+
   & .body {
     margin: 42px 0;
   }
+
   & .footer {
     display: flex;
     flex-direction: column;

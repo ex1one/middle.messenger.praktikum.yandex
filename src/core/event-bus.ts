@@ -1,30 +1,20 @@
-// TODO: Подумать над расположением этого файла в файловой структуре. Пока не нравится, что event-bus находится в core
-// TODO: Типизация хромает в EventBus, есть ролик как улучшить эту типизацию
-
-type ListenerValue = Array<() => unknown>;
-
-export type Listener<T extends ListenerValue = ListenerValue> = (
-  ...args: T
-) => void;
+export type Listener<T extends unknown[] = unknown[]> = (...args: T) => void;
 
 export default class EventBus<
   E extends string = string,
-  M extends { [K in E]: ListenerValue } = Record<E, ListenerValue>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  M extends { [K in E]: unknown[] } = Record<E, any[]>,
 > {
   private listeners: { [key in E]?: Listener<M[E]>[] } = {};
 
   on(event: E, callback: Listener<M[E]>) {
-    if (!this.listeners[event]) {
-      this.listeners[event] = [];
-    }
+    if (!this.listeners[event]) this.listeners[event] = [];
 
     this.listeners[event]!.push(callback);
   }
 
   off(event: E, callback: Listener<M[E]>) {
-    if (!this.listeners[event]) {
-      throw new Error(`Нет события: ${event}`);
-    }
+    if (!this.listeners[event]) return;
 
     this.listeners[event] = this.listeners[event]!.filter(
       (listener) => listener !== callback,
@@ -32,12 +22,14 @@ export default class EventBus<
   }
 
   emit(event: E, ...args: M[E]) {
-    if (!this.listeners[event]) {
-      return;
-    }
+    if (!this.listeners[event]) return;
 
-    this.listeners[event]!.forEach((listener) => {
+    this.listeners[event]!.forEach(function (listener) {
       listener(...args);
     });
+  }
+
+  destroy() {
+    this.listeners = {};
   }
 }

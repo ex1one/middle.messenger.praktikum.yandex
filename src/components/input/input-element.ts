@@ -19,10 +19,6 @@ export interface InputElementProps
 }
 
 export class InputElement extends Block<InputElementProps> {
-  constructor(props: InputElementProps) {
-    super(props);
-  }
-
   protected render(): string {
     const {
       variant,

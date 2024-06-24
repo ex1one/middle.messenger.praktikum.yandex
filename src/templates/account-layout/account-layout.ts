@@ -1,6 +1,7 @@
 import './account-layout.css';
 
-import { Button } from '@src/components';
+import { NavLink } from '@src/components';
+import { PATHES } from '@src/consts';
 import { Block } from '@src/core';
 
 interface IProps {
@@ -12,10 +13,11 @@ export class AccountLayout extends Block<
 > {
   constructor(props: IProps) {
     super({
-      BackButton: new Button({
+      BackButton: new NavLink({
         arrow: 'left',
         variant: 'arrow',
         color: 'primary',
+        href: PATHES.Chats,
       }),
       ...props,
     });
@@ -28,7 +30,7 @@ export class AccountLayout extends Block<
                   {{{ BackButton }}}
               </div>
               <div class="account-layout__content">
-                  <div class="content__wrapper">
+                  <div class="account-layout-content__wrapper">
                       {{{ children }}}
                   </div>
               </div>

@@ -1,6 +1,9 @@
-import { Button, Input } from '@src/components';
+import { Button, Input, NavLink } from '@src/components';
+import { PATHES } from '@src/consts';
 import { Block } from '@src/core';
+import router from '@src/router';
 import SCHEMAS from '@src/schemas';
+import { signUpThunk } from '@src/stores/user/thunks';
 import { FormTemplate, FormFooter, FormBody } from '@src/templates';
 import { useForm } from '@src/utils';
 
@@ -19,9 +22,9 @@ export class SignUp extends Block {
           name: 'login',
           label: 'Логин',
         }),
-        InputName: new Input({
+        InputFirstName: new Input({
           variant: 'underline',
-          name: 'name',
+          name: 'first_name',
           label: 'Имя',
         }),
         InputSecondName: new Input({
@@ -50,14 +53,24 @@ export class SignUp extends Block {
       validationSchema: {
         InputEmail: SCHEMAS.USER.EMAIL,
         InputLogin: SCHEMAS.USER.LOGIN,
-        InputName: SCHEMAS.USER.NAME,
+        InputFirstName: SCHEMAS.USER.FIRST_NAME,
         InputSecondName: SCHEMAS.USER.SECOND_NAME,
         InputPhone: SCHEMAS.USER.PHONE,
         InputPassword: SCHEMAS.USER.PASSWORD,
         InputConfirmPassword: SCHEMAS.USER.CONFIRM_PASSWORD,
       },
       onSubmit: (values) => {
-        console.log(values, 'values');
+        // TODO: Remove
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { confirm_password, ...other } = values;
+        // TODO: Remove
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        signUpThunk(other)
+          .then(() => router.go(PATHES.Profile))
+          .catch(alert);
       },
     });
 
@@ -66,7 +79,7 @@ export class SignUp extends Block {
       body: new FormBody({
         InputEmail: form.values.InputEmail,
         InputLogin: form.values.InputLogin,
-        InputName: form.values.InputName,
+        InputFirstName: form.values.InputFirstName,
         InputSecondName: form.values.InputSecondName,
         InputPhone: form.values.InputPhone,
         InputPassword: form.values.InputPassword,
@@ -77,10 +90,10 @@ export class SignUp extends Block {
           text: 'Зарегистрироваться',
           type: 'submit',
         }),
-        LoginButton: new Button({
-          variant: 'link',
+        LoginButtonLink: new NavLink({
           size: 'small',
           text: 'Войти',
+          href: PATHES.SignIn,
         }),
       }),
       events: {

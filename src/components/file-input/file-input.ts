@@ -9,6 +9,7 @@ interface IFileInputProps
   extends Pick<InputElementProps, 'name' | 'className' | 'events'> {
   value: File | null;
   onChange?: (value: File) => void;
+  FileInput?: InputElement;
 }
 
 export class FileInput extends Block<IFileInputProps> {
@@ -16,6 +17,7 @@ export class FileInput extends Block<IFileInputProps> {
     const { events, className, onChange, ...otherProps } = props;
 
     const FileInput = new InputElement({
+      name: 'file',
       ...otherProps,
       className: `file-input ${renderIf(className, className)}`,
       type: 'file',

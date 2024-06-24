@@ -1,6 +1,7 @@
 import './page-error.css';
+import { PATHES } from '@src/consts';
 
-import { Button } from '@src/components';
+import { NavLink } from '@src/components';
 import { Block } from '@src/core';
 import { renderIf } from '@src/helpers';
 
@@ -13,10 +14,10 @@ interface IProps {
 export class PageErrorTemplate extends Block<IProps> {
   constructor(props: IProps) {
     super({
-      back: new Button({
+      back: new NavLink({
         text: 'Назад к чатам',
         size: 'small',
-        variant: 'link',
+        href: PATHES.Chats,
       }),
       ...props,
     });

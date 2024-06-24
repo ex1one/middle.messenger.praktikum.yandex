@@ -13,6 +13,7 @@
   height: 0;
 }
 
+/* TODO: Вынести в mixins стили для текста */
 .empty-file-name {
   color: var(--main-color);
   border-bottom: 1px solid var(--main-color);

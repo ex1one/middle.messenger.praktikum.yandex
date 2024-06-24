@@ -1,6 +1,10 @@
+import { SignInRequestData } from '@src/api/user/types';
 import { Button, Input } from '@src/components';
+import { PATHES } from '@src/consts';
 import { Block } from '@src/core';
+import router from '@src/router';
 import SCHEMAS from '@src/schemas';
+import { signInThunk } from '@src/stores/user/thunks';
 import { FormBody, FormFooter, FormTemplate } from '@src/templates';
 import { useForm } from '@src/utils';
 
@@ -24,8 +28,19 @@ export class SignIn extends Block {
         InputLogin: SCHEMAS.USER.LOGIN,
         InputPassword: SCHEMAS.USER.PASSWORD,
       },
-      onSubmit: (values) => {
-        console.log(values, 'values');
+      // TODO: Remove
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      onSubmit: (values: SignInRequestData) => {
+        signInThunk(values)
+          .then(() => router.go(PATHES.Chats))
+          .catch((error) => {
+            if (error.includes('User already in system')) {
+              router.go(PATHES.Chats);
+            } else {
+              alert(error);
+            }
+          });
       },
     });
 
@@ -41,6 +56,11 @@ export class SignIn extends Block {
           variant: 'link',
           size: 'small',
           text: 'Нет аккаунта?',
+          events: {
+            click: () => {
+              router.go(PATHES.SignUp);
+            },
+          },
         }),
       }),
       events: {

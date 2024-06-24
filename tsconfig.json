@@ -8,25 +8,24 @@
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": ".",
-
     "allowJs": false,
     "alwaysStrict": false,
     "pretty": true,
     "removeComments": true,
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-
-    /* Linting */
+    "strictNullChecks": true,
     "strict": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "declaration": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
     "paths": {
       "@src/*": ["src/*"],
       "@public/*": ["public/*"]

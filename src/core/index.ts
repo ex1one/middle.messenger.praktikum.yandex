@@ -1,6 +1,6 @@
 import EventBus from './event-bus';
 import Block, { type Events } from './block';
-import HTTPTransport from './fetch';
+import { Store } from './store';
 
-export { EventBus, Block, HTTPTransport };
+export { EventBus, Block, Store };
 export type { Events };
