@@ -1,7 +1,6 @@
 import { TKeyofMethods } from './types/methods';
-import { queryStringify } from './utils/query-stringify';
+import { queryStringify, isValidJSON } from './utils';
 import METHODS from './config/methods';
-import { isValidJSON } from '@src/api/utils';
 
 interface Options {
   method: TKeyofMethods;
@@ -19,7 +18,7 @@ type HTTPMethod = <D = unknown>(
   options?: OptionsWithoutMethod,
 ) => Promise<D>;
 
-class HTTPTransport {
+export class HTTPTransport {
   get: HTTPMethod = (url, options) => {
     return this.request(url, { ...options, method: METHODS.GET });
   };
