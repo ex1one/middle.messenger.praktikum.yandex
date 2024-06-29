@@ -41,10 +41,10 @@ npm run build
 
 The following pages are provided in the project:
 
-1. Profile - /profile
-2. SignIn - /sign-in
+1. Profile - /settings
+2. SignIn - /
 3. SignUp - /sign-up
-4. Chats - /chats
+4. Chats - /messenger
 5. 404 - /not-found
 6. 500 - /page-error
 
@@ -53,10 +53,17 @@ The following pages are provided in the project:
 1. Button
 2. Input
 3. Divider
+4. FileInput
+5. Link
+6. Modal
+7. Space
+8. UploadProfileLogoModal
+9. NavLink
+10. ProfileLogo
 
 ### Templates
 
-1. Account-layout
-2. Chats-layout
+1. AccountLayout
+2. ChatsLayout
 3. FormTemplate
 4. PageErrorTemplate

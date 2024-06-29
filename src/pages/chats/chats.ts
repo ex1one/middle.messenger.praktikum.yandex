@@ -18,9 +18,6 @@ export class Chats extends Block<{}, ChatsState> {
     const url = new URL(window.location.href);
     const chatId = url.searchParams.get('chat');
 
-    console.log(url, 'url');
-    console.log(chatId, 'chatId');
-
     super(undefined, { chats: [], selectedChat: null });
 
     API.chats.getChats().then((res) => {

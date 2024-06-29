@@ -92,6 +92,10 @@ export class Route {
     }
   }
 
+  getBlock() {
+    return this._block;
+  }
+
   leave() {
     if (this._block) {
       this._block = null;
@@ -109,8 +113,9 @@ export class Route {
 
   render() {
     if (!this._block) {
-      this._block = new this._blockClass({});
-      this._renderDom(this._props.rootQuery, this._block);
+      const { rootQuery, ...other } = this._props;
+      this._block = new this._blockClass(other);
+      this._renderDom(rootQuery, this._block);
       return;
     }
   }

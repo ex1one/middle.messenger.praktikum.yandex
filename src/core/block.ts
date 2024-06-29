@@ -12,7 +12,7 @@ export interface Events<T extends HTMLElement = HTMLElement> {
 }
 
 type IProps = object & Events;
-type setState<S> = (state: S) => Partial<S> | Partial<S>;
+type setState<S> = ((state: S) => Partial<S>) | Partial<S>;
 
 class Block<T extends IProps = IProps, S extends object = object> {
   static EVENTS = {
@@ -231,7 +231,12 @@ class Block<T extends IProps = IProps, S extends object = object> {
   }
 
   private _render() {
-    const fragment = this.compile(this.render(), this.props);
+    // Так и должно быть. Если 2 названия одинаковых, будет что-то перезатирать. Могут быть из-за этого баги какие-то.
+    // Придумать что-нибудь.
+    const fragment = this.compile(this.render(), {
+      ...this.props,
+      ...this.state,
+    });
 
     const newElement = fragment.firstElementChild as HTMLElement;
 
